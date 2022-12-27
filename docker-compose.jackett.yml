@@ -1,0 +1,25 @@
+version: "3.7"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  jackett:
+    image: "linuxserver/jackett"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      GUID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/jackett:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.jackett.loadbalancer.server.port=9117"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.jackett.entrypoints=web-secure"
+      - "traefik.http.routers.jackett.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jackett.middlewares=authelia@docker"

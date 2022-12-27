@@ -1,0 +1,25 @@
+version: "3.7"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  sonarr:
+    image: "linuxserver/sonarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      GUID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/sonarr:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.sonarr.entrypoints=web-secure"
+      - "traefik.http.routers.sonarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sonarr.middlewares=authelia@docker"
