@@ -171,6 +171,12 @@ def main():
 
     mkdir('organizr')
 
+    mkdir('radarr')
+
+    mkdir('sonarr')
+
+    mkdir('jackett')
+
 
 if __name__ == '__main__':
     main()
