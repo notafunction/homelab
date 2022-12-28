@@ -15,6 +15,7 @@ session:
     port: 6379
 
 storage:
+  encryption_key: ${AUTHELIA_JWT_SECRET}
   local:
     path: /config/db.sqlite3
 
