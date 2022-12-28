@@ -8,10 +8,18 @@ networks:
        - subnet: "${SUBNET_AND_MASK}"
 
 services:
-  dockerhost:
-    image: "qoomon/docker-host"
+  # dockerhost:
+  #   image: "qoomon/docker-host"
+  #   restart: "unless-stopped"
+  #   cap_add: [ "NET_ADMIN", "NET_RAW" ]
+
+  cloudflareddns:
+    image: "oznu/cloudflare-ddns"
     restart: "unless-stopped"
-    cap_add: [ "NET_ADMIN", "NET_RAW" ]
+    environment:
+      API_KEY: "${CLOUDFLARE_API_KEY}"
+      ZONE: "${CLOUDFLARE_ZONE}"
+      SUBDOMAIN: "${CLOUDFLARE_SUBDOMAIN}"
 
   traefik:
     image: "traefik:${TRAEFIK_VERSION}"
