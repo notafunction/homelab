@@ -73,7 +73,9 @@ access_control:
       subject: 'group:vpn'
       policy: one_factor
     # Transmission
-    - domain: transmission.${DOMAIN_NAME}
+    - domain: 
+        - transmission.${DOMAIN_NAME}
+        - transmissionvpn.${DOMAIN_NAME}
       subject: 'group:transmission'
       policy: one_factor
 
