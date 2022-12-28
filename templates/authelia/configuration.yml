@@ -79,6 +79,26 @@ access_control:
         - transmissionvpn.${DOMAIN_NAME}
       subject: 'group:transmission'
       policy: one_factor
+    # Jackett
+    - domain: jackett.${DOMAIN_NAME}
+      resources:
+        - "/api/*"
+      policy: bypass
+    - domain: jackett.${DOMAIN_NAME}
+      subject: 'group:jackett'
+      policy: one_factor
+    # Sonarr
+    - domain: sonarr.${DOMAIN_NAME}
+      subject: 'group:sonarr'
+      policy: one_factor
+    # Radarr
+    - domain: radarr.${DOMAIN_NAME}
+      subject: 'group:radarr'
+      policy: one_factor
+    # Readarr
+    - domain: readarr.${DOMAIN_NAME}
+      subject: 'group:readarr'
+      policy: one_factor
 
 authentication_backend:
   disable_reset_password: false
