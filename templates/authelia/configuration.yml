@@ -50,7 +50,7 @@ access_control:
       subject: 'group:adminer'
       policy: one_factor
     # CodeServer
-    - domain: codeserver.${DOMAIN_NAME}
+    - domain: code.${DOMAIN_NAME}
       subject: 'group:codeserver'
       policy: one_factor
     # Aria2

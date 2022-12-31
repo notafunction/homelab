@@ -177,6 +177,8 @@ def main():
 
     mkdir('jackett')
 
+    mkdir('transmissionvpn')
+
 
 if __name__ == '__main__':
     main()

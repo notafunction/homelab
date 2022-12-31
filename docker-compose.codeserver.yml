@@ -10,15 +10,17 @@ services:
     environment:
       PUID: "1000"
       GUID: "1000"
-      TZ: "Europe/London"
+      TZ: ${TIMEZONE}
       PROXY_DOMAIN: "codeserver.${DOMAIN_NAME}"
       SUDO_PASSWORD: "root"
+      DOCKER_MODS: "linuxserver/mods:code-server-nvm"
     volumes:
       - "./data/codeserver/config:/config"
+      - ${CODESERVER_DATA}:/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.codeserver.loadbalancer.server.port=8443"
-      - "traefik.http.routers.codeserver.rule=Host(`codeserver.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.codeserver.rule=Host(`code.${DOMAIN_NAME}`)"
       - "traefik.http.routers.codeserver.entrypoints=web-secure"
       - "traefik.http.routers.codeserver.tls.certresolver=letsencrypt"
       - "traefik.http.routers.codeserver.middlewares=authelia@docker"

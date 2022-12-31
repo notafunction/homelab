@@ -22,11 +22,19 @@ services:
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
       - TRANSMISSION_UMASK=002
-      - TRANSMISSION_RATIO_LIMIT=1.00
+      - TRANSMISSION_RATIO_LIMIT=1
       - TRANSMISSION_RATIO_LIMIT_ENABLED=true
+      - TRANSMISSION_DOWNLOAD_DIR=/data/torrents/completed
+      - TRANSMISSION_INCOMPLETE_DIR=/data/torrents/incomplete
+      - TRANSMISSION_WATCH_DIR=/data/torrents/watch
+      - NORDVPN_COUNTRY=US
+      - NORDVPN_CATEGORY=legacy_p2p
+      - NORDVPN_PROTOCOL=udp
+
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./data/transmissionvpn/config:/config
+      - ${HOMELAB_DATA}:/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.transmissionvpn.loadbalancer.server.port=9091"

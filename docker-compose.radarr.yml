@@ -15,6 +15,8 @@ services:
       TZ: "${TIMEZONE}"
     volumes:
       - "./data/radarr:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${HOMELAB_DATA}:/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"

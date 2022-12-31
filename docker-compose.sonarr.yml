@@ -16,6 +16,7 @@ services:
     volumes:
       - "./data/sonarr:/config"
       - "/etc/localtime:/etc/localtime:ro"
+      - ${HOMELAB_DATA}:/data
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
