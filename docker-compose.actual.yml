@@ -1,0 +1,25 @@
+version: "3"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  actual_server:
+    restart: unless-stopped
+    build:
+      context: ./containers/actual-server
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5006:5006"
+    volumes:
+      - ./data/actual/server-files:/app/server-files
+      - ./data/actual/user-files:/app/user-files
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.actual.loadbalancer.server.port=5006"
+      - "traefik.http.routers.actual.rule=Host(`actual.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.actual.entrypoints=web-secure"
+      - "traefik.http.routers.actual.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.actual.middlewares=authelia@docker"

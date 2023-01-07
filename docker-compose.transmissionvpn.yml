@@ -14,8 +14,8 @@ services:
     devices:
       - /dev/net/tun
     dns:
-      - 1.1.1.1
-      - 1.0.0.1
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
       - OPENVPN_PROVIDER=${OPENVPN_PROVIDER}
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
@@ -29,7 +29,7 @@ services:
       - TRANSMISSION_WATCH_DIR=/data/torrents/watch
       - NORDVPN_COUNTRY=US
       - NORDVPN_CATEGORY=legacy_p2p
-      - NORDVPN_PROTOCOL=udp
+      - NORDVPN_PROTOCOL=tcp
 
     volumes:
       - /etc/localtime:/etc/localtime:ro

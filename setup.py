@@ -179,6 +179,9 @@ def main():
 
     mkdir('transmissionvpn')
 
+    mkdir('actual/server-files')
+    mkdir('actual/user-files')
+
 
 if __name__ == '__main__':
     main()

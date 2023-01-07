@@ -7,3 +7,6 @@
 [submodule "containers/ovpn-nodejs"]
 	path = containers/ovpn-nodejs
 	url = https://github.com/m1k1o/ovpn-nodejs
+[submodule "containers/actual-server"]
+	path = containers/actual-server
+	url = https://github.com/actualbudget/actual-server
