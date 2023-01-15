@@ -107,6 +107,13 @@ access_control:
     - domain: actual.${DOMAIN_NAME}
       subject: 'group:actual'
       policy: one_factor
+    - domain: paperless.${DOMAIN_NAME}
+      resouces:
+        - "/api/*"
+      policy: bypass
+    - domain: paperless.${DOMAIN_NAME}
+      subject: 'group:paperless'
+      policy: one_factor
 
 authentication_backend:
   disable_reset_password: false

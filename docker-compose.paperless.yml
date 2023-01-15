@@ -1,0 +1,46 @@
+version: "3.4"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - ./data/paperless/redis:/data
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - broker
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./data/paperless/data:/usr/src/paperless/data
+      - ./data/paperless/media:/usr/src/paperless/media
+      - ./data/paperless/export:/usr/src/paperless/export
+      - ./data/paperless/consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_URL: https://paperless.${DOMAIN_NAME}
+      PAPERLESS_SECRET_KEY: eOidopVAsqn0UjYOc8UIVVDLoIrm9TjF
+      PAPERLESS_TIME_ZONE: America/Los_Angeles
+      PAPERLESS_OCR_LANGUAGE: eng
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_ENABLE_HTTP_REMOTE_USER: true
+      USERMAP_UID: 1000
+      USERMAP_GID: 1000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.paperless.loadbalancer.server.port=8000"
+      - "traefik.http.routers.paperless.rule=Host(`paperless.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.paperless.entrypoints=web-secure"
+      - "traefik.http.routers.paperless.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.paperless.middlewares=authelia@docker"

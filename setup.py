@@ -182,6 +182,12 @@ def main():
     mkdir('actual/server-files')
     mkdir('actual/user-files')
 
+    mkdir('paperless/redis')
+    mkdir('paperless/data')
+    mkdir('paperless/media')
+    mkdir('paperless/export')
+    mkdir('paperless/consume')
+
 
 if __name__ == '__main__':
     main()
