@@ -188,6 +188,8 @@ def main():
     mkdir('paperless/export')
     mkdir('paperless/consume')
 
+    mkdir('ombi/config')
+
 
 if __name__ == '__main__':
     main()

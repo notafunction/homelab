@@ -1,0 +1,23 @@
+version: "3.7"
+
+networks:
+  external:
+    name: "homelab_base_default"
+
+services:
+  ombi:
+    image: linuxserver/ombi:latest
+    container_name: ombi
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIMEZONE}
+    volumes:
+      - ./data/ombi/config:/config
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.services.ombi.loadbalancer.server.port: 3579
+      traefik.http.routers.ombi.rule: Host(`ombi.${DOMAIN_NAME}`)
+      traefik.http.routers.ombi.entrypoints: web-secure
+      traefik.http.routers.ombi.tls.certresolver: letsencrypt
