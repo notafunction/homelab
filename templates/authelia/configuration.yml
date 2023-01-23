@@ -6,7 +6,8 @@ jwt_secret: ${AUTHELIA_JWT_SECRET}
 session:
   name: authelia_session
   secret: ${AUTHELIA_SECRET}
-  expiration: 3600
+  expiration: 1h
+  remember_me_duration: 2w
   inactivity: 300
   domain: ${DOMAIN_NAME}
 
@@ -108,11 +109,14 @@ access_control:
       subject: 'group:actual'
       policy: one_factor
     - domain: paperless.${DOMAIN_NAME}
-      resouces:
+      resources:
         - "/api/*"
       policy: bypass
     - domain: paperless.${DOMAIN_NAME}
       subject: 'group:paperless'
+      policy: one_factor
+    - domain: grafana.${DOMAIN_NAME}
+      subject: 'group:grafana'
       policy: one_factor
 
 authentication_backend:

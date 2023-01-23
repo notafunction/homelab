@@ -114,6 +114,7 @@ services:
       - "traefik.http.routers.grafana.entrypoints=web-secure"
       - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
       - "traefik.http.routers.grafana.middlewares=allowframe@file"
+      - "traefik.http.routers.grafana.middlewares=authelia@docker"
   
 # Optional ZFS metrics for Prometheus
 #  zfsprom:

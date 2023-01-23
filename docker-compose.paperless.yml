@@ -27,13 +27,14 @@ services:
       - ./data/paperless/data:/usr/src/paperless/data
       - ./data/paperless/media:/usr/src/paperless/media
       - ./data/paperless/export:/usr/src/paperless/export
-      - ./data/paperless/consume:/usr/src/paperless/consume
+      - ${PAPERLESS_CONSUME}:/usr/src/paperless/consume
     environment:
       PAPERLESS_URL: https://paperless.${DOMAIN_NAME}
       PAPERLESS_SECRET_KEY: eOidopVAsqn0UjYOc8UIVVDLoIrm9TjF
       PAPERLESS_TIME_ZONE: America/Los_Angeles
       PAPERLESS_OCR_LANGUAGE: eng
       PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_CONSUMER_POLLING: 15
       PAPERLESS_ENABLE_HTTP_REMOTE_USER: true
       USERMAP_UID: 1000
       USERMAP_GID: 1000
