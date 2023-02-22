@@ -2,7 +2,7 @@ version: "3.7"
 networks:
   default:
     external:
-      name: "homelab_base_default"
+      name: "homelab_default"
 services:
   filebrowser:
     image: "filebrowser/filebrowser:${FILEBROWSER_VERSION}"
