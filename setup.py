@@ -190,6 +190,8 @@ def main():
 
     mkdir('ombi/config')
 
+    mkdir('homepage/config')
+
 
 if __name__ == '__main__':
     main()

@@ -14,7 +14,7 @@ providers:
     watch: true
   docker:
     endpoint: "unix:///var/run/docker.sock"
-    network: "homelab_default"
+    network: "homelab_base_default"
     watch: true
     exposedByDefault: false
 #    constraints: Label(`com.docker.compose.project`,`homelab_base`)

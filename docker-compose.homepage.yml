@@ -1,0 +1,20 @@
+version: "3.7"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  homepage:
+    image: ghcr.io/benphelps/homepage:latest
+    volumes:
+      - ./data/homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.homepage.loadbalancer.server.port=9117"
+      - "traefik.http.routers.homepage.rule=Host(`home.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.homepage.entrypoints=web-secure"
+      - "traefik.http.routers.homepage.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.homepage.middlewares=authelia@docker"

@@ -118,6 +118,9 @@ access_control:
     - domain: grafana.${DOMAIN_NAME}
       subject: 'group:grafana'
       policy: one_factor
+    - domain: home.${DOMAIN_NAME}
+      subject: 'group:homepage'
+      policy: one_factor
 
 authentication_backend:
   disable_reset_password: false

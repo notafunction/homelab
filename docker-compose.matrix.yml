@@ -2,7 +2,7 @@ version: "3.7"
 networks:
   default:
     external:
-      name: "homelab_default"
+      name: "homelab_base_default"
 
 services:
   synapse:
