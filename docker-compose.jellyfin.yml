@@ -8,14 +8,14 @@ services:
     image: "linuxserver/jellyfin:${JELLYFIN_VERSION}"
     restart: "unless-stopped"
     environment:
-      PUID: "0"
-      PGID: "0"
+      PUID: 1000
+      PGID: 1000
       UMASK_SET: "022"
     volumes:
       - "./data/jellyfin/config:/config"
       - "./data/jellyfin/cache:/cache"
       - "./data/jellyfin/transcode:/transcode"
-      - "${JELLYFIN_MEDIA}:/media"
+      - "${MEDIA_DATA}:/media"
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"

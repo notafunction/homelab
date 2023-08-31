@@ -172,10 +172,10 @@ def main():
     mkdir('organizr')
 
     mkdir('radarr')
-
     mkdir('sonarr')
-
     mkdir('jackett')
+    mkdir('readarr')
+    mkdir('prowlarr')
 
     mkdir('transmissionvpn')
 
@@ -191,6 +191,9 @@ def main():
     mkdir('ombi/config')
 
     mkdir('homepage/config')
+
+    mkdir('pihole/data')
+    mkdir('pihole/dnsmasq')
 
 
 if __name__ == '__main__':

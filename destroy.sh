@@ -7,4 +7,4 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-docker-compose -p homelab_${SERVICE} -f docker-compose.${SERVICE}.yml down
+docker compose -p homelab_${SERVICE} -f docker-compose.${SERVICE}.yml down

@@ -42,7 +42,7 @@ services:
       - "traefik.http.routers.traefik.middlewares=authelia@docker"
 
   redis:
-    image: "redis:${REDIS_VERSION}"
+    image: "arm64v8/redis:${REDIS_VERSION}"
     restart: "unless-stopped"
 
   postgres:
@@ -90,17 +90,17 @@ services:
       - "traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true"
       - "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User, Remote-Groups"
 
-  static:
-    image: "nginx:${NGINX_VERSION}"
-    restart: "unless-stopped"
-    volumes:
-      - "./data/static:/usr/share/nginx/html:ro"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.static.loadbalancer.server.port=80"
-      - "traefik.http.routers.static.rule=Host(`static.${DOMAIN_NAME}`)"
-      - "traefik.http.routers.static.entrypoints=web-secure"
-      - "traefik.http.routers.static.tls.certresolver=letsencrypt"
+  # static:
+  #   image: "nginx:${NGINX_VERSION}"
+  #   restart: "unless-stopped"
+  #   volumes:
+  #     - "./data/static:/usr/share/nginx/html:ro"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.services.static.loadbalancer.server.port=80"
+  #     - "traefik.http.routers.static.rule=Host(`static.${DOMAIN_NAME}`)"
+  #     - "traefik.http.routers.static.entrypoints=web-secure"
+  #     - "traefik.http.routers.static.tls.certresolver=letsencrypt"
 
   openldap:
     image: "osixia/openldap:${OPENLDAP_VERSION}"
@@ -143,17 +143,17 @@ services:
       - "traefik.http.routers.adminer.tls.certresolver=letsencrypt"
       - "traefik.http.routers.adminer.middlewares=authelia@docker,allowframe@file"
 
-  portainer:
-    image: "portainer/portainer:${PORTAINER_VERSION}"
-    command: "-H unix:///var/run/docker.sock --no-auth --no-analytics"
-    restart: "unless-stopped"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "./data/portainer/data:/data"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
-      - "traefik.http.routers.portainer.entrypoints=web-secure"
-      - "traefik.http.routers.portainer.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.portainer.middlewares=authelia@docker,allowframe@file"
+  # portainer:
+  #   image: "portainer/portainer:${PORTAINER_VERSION}"
+  #   command: "-H unix:///var/run/docker.sock --no-auth --no-analytics"
+  #   restart: "unless-stopped"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"
+  #     - "./data/portainer/data:/data"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+  #     - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)"
+  #     - "traefik.http.routers.portainer.entrypoints=web-secure"
+  #     - "traefik.http.routers.portainer.tls.certresolver=letsencrypt"
+  #     - "traefik.http.routers.portainer.middlewares=authelia@docker,allowframe@file"

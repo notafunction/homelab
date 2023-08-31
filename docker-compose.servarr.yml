@@ -1,0 +1,102 @@
+version: "3.7"
+
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  jackett:
+    image: "linuxserver/jackett"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      GUID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/jackett:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.jackett.loadbalancer.server.port=9117"
+      - "traefik.http.routers.jackett.rule=Host(`jackett.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.jackett.entrypoints=web-secure"
+      - "traefik.http.routers.jackett.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jackett.middlewares=authelia@docker"
+
+  sonarr:
+    image: "linuxserver/sonarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/sonarr:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${HOMELAB_DATA}:/data
+      - ${MEDIA_DATA}:/media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.sonarr.entrypoints=web-secure"
+      - "traefik.http.routers.sonarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.sonarr.middlewares=authelia@docker"
+
+  radarr:
+    image: "linuxserver/radarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/radarr:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${HOMELAB_DATA}:/data
+      - ${MEDIA_DATA}:/media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.radarr.entrypoints=web-secure"
+      - "traefik.http.routers.radarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.radarr.middlewares=authelia@docker"
+
+  readarr:
+    image: "linuxserver/readarr:develop"
+    restart: "unless-stopped"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/readarr:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${HOMELAB_DATA}:/data
+      - ${MEDIA_DATA}:/media
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+      - "traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.readarr.entrypoints=web-secure"
+      - "traefik.http.routers.readarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.readarr.middlewares=authelia@docker"
+
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    restart: unless-stopped
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/prowlarr:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.prowlarr.entrypoints=web-secure"
+      - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.prowlarr.middlewares=authelia@docker"

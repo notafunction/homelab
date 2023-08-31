@@ -7,4 +7,4 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-docker-compose -p homelab_${STACK} -f docker-compose.${STACK}.yml up --build -d
+docker compose -p homelab_${STACK} -f docker-compose.${STACK}.yml up --build -d

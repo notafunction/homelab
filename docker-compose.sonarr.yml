@@ -11,12 +11,13 @@ services:
     restart: "unless-stopped"
     environment:
       PUID: 1000
-      GUID: 1000
+      PGID: 1000
       TZ: "${TIMEZONE}"
     volumes:
       - "./data/sonarr:/config"
       - "/etc/localtime:/etc/localtime:ro"
       - ${HOMELAB_DATA}:/data
+      - ${MEDIA_DATA}:/media
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"

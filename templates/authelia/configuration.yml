@@ -15,6 +15,9 @@ session:
     host: redis
     port: 6379
 
+log:
+  file_path: /config/authelia.log
+
 storage:
   encryption_key: ${AUTHELIA_JWT_SECRET}
   local:
@@ -100,6 +103,10 @@ access_control:
     - domain: readarr.${DOMAIN_NAME}
       subject: 'group:readarr'
       policy: one_factor
+    # Prowlarr
+    - domain: prowlarr.${DOMAIN_NAME}
+      subject: 'group:prowlarr'
+      policy: one_factor
     # Actual Budget
     - domain: actual.${DOMAIN_NAME}
       resources:
@@ -118,8 +125,8 @@ access_control:
     - domain: grafana.${DOMAIN_NAME}
       subject: 'group:grafana'
       policy: one_factor
-    - domain: home.${DOMAIN_NAME}
-      subject: 'group:homepage'
+    - domain: pihole.${DOMAIN_NAME}
+      subject: 'group:pihole'
       policy: one_factor
 
 authentication_backend:
