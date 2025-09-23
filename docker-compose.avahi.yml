@@ -1,0 +1,17 @@
+networks:
+  default:
+    external:
+      name: "homelab_base_default"
+
+services:
+  avahi-reflector:
+    # A minimal, purpose-built image for running avahi-daemon
+    image: flungo/avahi
+    container_name: avahi-reflector
+    # Host networking is required for mDNS reflection to work
+    network_mode: "host"
+    volumes:
+      # Mount the custom config file to enable reflector mode
+      - ./data/avahi-reflector/avahi-daemon.conf:/etc/avahi/avahi-daemon.conf
+    restart: unless-stopped
+

@@ -1,4 +1,6 @@
 data/*
+media-data/*
+openvpn/
 !data/.gitkeep
 .vscode/
 .env

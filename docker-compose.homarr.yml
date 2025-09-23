@@ -6,14 +6,16 @@ networks:
       name: "homelab_base_default"
 
 services:
-  homepage:
-    image: ghcr.io/benphelps/homepage:latest
+  homarr:
+    image: ghcr.io/ajnart/homarr:latest
     volumes:
-      - ./data/homepage/config:/app/config
+      - ./data/homarr/configs:/app/data/configs
+      - ./data/homarr/icons:/app/public/icons
+      - ./data/homarr/data:/data
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+      - "traefik.http.services.homepage.loadbalancer.server.port=7575"
       - "traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN_NAME}`)"
       - "traefik.http.routers.homepage.entrypoints=web-secure"
       - "traefik.http.routers.homepage.tls.certresolver=letsencrypt"

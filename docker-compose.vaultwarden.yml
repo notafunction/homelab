@@ -1,0 +1,40 @@
+version: "3"
+
+networks:
+  default:
+    name: "homelab_base_default"
+    external: true
+
+volumes:
+  vaultwarden_data:
+  vaultwarden-rclone-data:
+    external: true
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+     - ./data/vaultwarden/vaultwarden:/data:rw
+    environment:
+     - ADMIN_TOKEN=$$argon2id$$v=19$$m=65540,t=3,p=4$$rAB1D6hGHZVGpydyp8pLX1lScFelB6GLCnxoq/kaI9M$$pWX7LPo0W+nuF+NmkrV1ReEHGFWcr5btCgCuNNp4yQI
+     - WEBSOCKET_ENABLED=true
+     - SIGNUPS_ALLOWED=false
+     - DOMAIN=https://vault.mattlatham.dev
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+     - "traefik.http.routers.vaultwarden.rule=Host(`vault.${DOMAIN_NAME}`)"
+     - "traefik.http.routers.vaultwarden.entrypoints=web-secure"
+     - "traefik.http.routers.vaultwarden.tls.certresolver=letsencrypt"
+
+  backup:
+    image: ttionya/vaultwarden-backup:latest
+    restart: always
+    volumes:
+      - ./data/vaultwarden/vaultwarden:/bitwarden/data
+      - ./data/vaultwarden/vaultwarden-backup:/config/
+    environment:
+      BACKUP_KEEP_DAYS: 30
+      PING_URL: https://hc-ping.com/20d56d53-5d8e-46aa-87b3-f685bd9e0eca
+

@@ -17,12 +17,10 @@ services:
       - PUID=1000
       - PGID=1000
       - OPENVPN_PROVIDER=${OPENVPN_PROVIDER}
+      - OPENVPN_CONFIG=${OPENVPN_CONFIG}
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
-      - NORDVPN_COUNTRY=US
-      - NORDVPN_CATEGORY=P2P
-      - NORDVPN_PROTOCOL=UDP
       - TRANSMISSION_UMASK=002
       - TRANSMISSION_RATIO_LIMIT_ENABLED=true
       - TRANSMISSION_RATIO_LIMIT=0.5
@@ -38,13 +36,14 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./data/transmissionvpn/config:/config
+      - ./openvpn/airvpn/:/etc/openvpn/custom/
       - ${HOMELAB_DATA}:/data
       - ${MEDIA_DATA}:/media
     labels:
       - "traefik.enable=true"
+      - "traefik.passHostHeader=true"
       - "traefik.http.services.transmissionvpn.loadbalancer.server.port=9091"
       - "traefik.http.routers.transmissionvpn.rule=Host(`transmission.${DOMAIN_NAME}`)"
       - "traefik.http.routers.transmissionvpn.entrypoints=web-secure"
       - "traefik.http.routers.transmissionvpn.tls.certresolver=letsencrypt"
       - "traefik.http.routers.transmissionvpn.middlewares=authelia@docker"
-

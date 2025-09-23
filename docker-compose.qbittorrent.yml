@@ -1,47 +1,42 @@
-
 version: "3.7"
+
 networks:
   default:
     external:
       name: "homelab_base_default"
+
 services:
-  openvpn:
-    image: "dperson/openvpn-client"
-    restart: "unless-stopped"
-    environment:
-      TZ: "Europe/London"
-      VPN_AUTH: "${QBITTORRENT_VPN_USERNAME};${QBITTORRENT_VPN_PASSWORD}"
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=0
-    cap_add:
-      - net_admin
-    read_only: true
-    tmpfs:
-      - /run
-      - /tmp
-    security_opt:
-      - label:disable
-    volumes:
-      - "./data/qbittorrent/openvpn:/vpn"
-      - "/dev/net:/dev/net:z"
   qbittorrent:
-    image: "linuxserver/qbittorrent:${QBITTORRENT_VERSION}"
+    image: "trigus42/qbittorrentvpn:latest"
     restart: "unless-stopped"
-    privileged: true
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
     environment:
-      PUID: "1000"
-      PGID: "117"
-      UMASK_SET: "002"
-      TZ: "Europe/London"
-      WEBUI_PORT: "8080"
-    network_mode: "service:openvpn"
+      - PUID=1000
+      - PGID=1000
+      - VPN_TYPE=wireguard
+      - WEBUI_ALLOWED_NETWORKS=${SUBNET_AND_MASK}
+      - WEBUI_PASSWORD=letmein
+      - TZ=${TIMEZONE}
     volumes:
-      - "./data/qbittorrent/config:/config"
-      - "${QBITTORRENT_DOWNLOADS}:/downloads"
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/qbittorrent/config:/config
+      - ./data/qbittorrent/incomplete:/data/incomplete
+      - ./openvpn/airvpn/:/config/wireguard/
+      - ${BASECAMP_MEDIA}/torrents:/data/torrents
     labels:
       - "traefik.enable=true"
+      - "traefik.passHostHeader=true"
       - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
       - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN_NAME}`)"
       - "traefik.http.routers.qbittorrent.entrypoints=web-secure"
       - "traefik.http.routers.qbittorrent.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.qbittorrent.middlewares=authelia@docker,allowframe@file"
+      - "traefik.http.routers.qbittorrent.middlewares=authelia@docker"
+      - "traefik.udp.routers.qbittorrent.entrypoints=qbittorrent-8999-udp"
+      - "traefik.udp.services.qbittorrent.loadbalancer.server.port=8999"
+      - "traefik.tcp.routers.qbittorrent.entrypoints=qbittorrent-8999-tcp"
+      - "traefik.tcp.services.qbittorrent.loadbalancer.server.port=8999"
+      - "traefik.tcp.routers.qbittorrent.rule=HostSNI(`*`)"

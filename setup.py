@@ -195,6 +195,12 @@ def main():
     mkdir('pihole/data')
     mkdir('pihole/dnsmasq')
 
+    mkdir('homeassistant')
+    copy('homeassistant/configuration.yaml', env, is_template=False)
+
+    mkdir('vaultwarden/vaultwarden')
+    mkdir('vaultwarden/vaultwarden-backup')
+
 
 if __name__ == '__main__':
     main()

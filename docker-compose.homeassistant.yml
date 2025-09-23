@@ -1,0 +1,24 @@
+networks:
+  default:
+    name: "homelab_base_default"
+    external: true
+
+services:
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    restart: unless-stopped
+    volumes:
+      - ./data/homeassistant:/config
+      - /run/dbus:/run/dbus:ro
+    environment:
+      - TZ=${TIMEZONE}
+      - PUID=1000
+      - PGID=1000
+    # network_mode: "host"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=web-secure"
+      - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.homeassistant.middlewares=authelia@docker"
