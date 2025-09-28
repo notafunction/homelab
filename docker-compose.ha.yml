@@ -4,7 +4,7 @@ networks:
     external: true
 
 services:
-  homeassistant:
+  ha:
     image: lscr.io/linuxserver/homeassistant:latest
     restart: unless-stopped
     volumes:
@@ -12,13 +12,12 @@ services:
       - /run/dbus:/run/dbus:ro
     environment:
       - TZ=${TIMEZONE}
-      - PUID=1000
-      - PGID=1000
-    # network_mode: "host"
+      - PUID=${UID}
+      - PGID=${GID}
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
-      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.homeassistant.rule=Host(`ha.${DOMAIN_NAME}`)"
       - "traefik.http.routers.homeassistant.entrypoints=web-secure"
       - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
       - "traefik.http.routers.homeassistant.middlewares=authelia@docker"

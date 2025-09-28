@@ -1,0 +1,13 @@
+networks:
+  default:
+    name: "homelab_base_default"
+    external: true
+
+services:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.<name>.loadbalancer.server.port=3000"
+      - "traefik.http.routers.<name>.rule=Host(`<name>.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.<name>.entrypoints=web-secure"
+      - "traefik.http.routers.<name>.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.<name>.middlewares=authelia@docker"

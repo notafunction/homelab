@@ -1,22 +1,37 @@
 networks:
   default:
-    external:
-      name: "homelab_base_default"
+    name: "homelab_base_default"
+    external: true
 
 services:
+  overseerr:
+    image: "linuxserver/overseerr:latest"
+    restart: "unless-stopped"
+    environment:
+      PUID: "${UID}"
+      PGID: "${GID}"
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/overseerr/config:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.overseerr.entrypoints=web-secure"
+      - "traefik.http.routers.overseerr.tls.certresolver=letsencrypt"
+      #- "traefik.http.routers.overseerr.middlewares=authelia@docker"
+
   sonarr:
     image: "linuxserver/sonarr"
     restart: "unless-stopped"
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: "${UID}"
+      PGID: "${GID}"
       TZ: "${TIMEZONE}"
     volumes:
       - "./data/sonarr:/config"
       - "/etc/localtime:/etc/localtime:ro"
       - ${MEDIA_DATA}:/data
-      - ${BASECAMP_MEDIA}:/data/media
-      - ${BASECAMP_MEDIA}/torrents:/data/torrents
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
@@ -29,15 +44,13 @@ services:
     image: "linuxserver/radarr"
     restart: "unless-stopped"
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: "${UID}"
+      PGID: "${GID}"
       TZ: "${TIMEZONE}"
     volumes:
       - "./data/radarr:/config"
       - "/etc/localtime:/etc/localtime:ro"
       - ${MEDIA_DATA}:/data
-      - ${BASECAMP_MEDIA}:/data/media
-      - ${BASECAMP_MEDIA}/torrents:/data/torrents
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
@@ -50,8 +63,8 @@ services:
     image: linuxserver/prowlarr:latest
     restart: unless-stopped
     environment:
-      PUID: 1000
-      PGID: 1000
+      PUID: "${UID}"
+      PGID: "${GID}"
       TZ: "${TIMEZONE}"
     volumes:
       - "./data/prowlarr:/config"
@@ -62,3 +75,38 @@ services:
       - "traefik.http.routers.prowlarr.entrypoints=web-secure"
       - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
       - "traefik.http.routers.prowlarr.middlewares=authelia@docker"
+
+  qbittorrent:
+    image: "trigus42/qbittorrentvpn:latest"
+    restart: "unless-stopped"
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+    environment:
+      PUID: "${UID}"
+      PGID: "${GID}"
+      VPN_TYPE: wireguard
+      WEBUI_ALLOWED_NETWORKS: "${SUBNET_AND_MASK}"
+      WEBUI_PASSWORD: letmein
+      TZ: "${TIMEZONE}"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/qbittorrent/config:/config
+      - ./data/qbittorrent/incomplete:/data/incomplete
+      - ./openvpn/airvpn/:/config/wireguard/
+      - ${MEDIA_DATA}:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.passHostHeader=true"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8080"
+      - "traefik.http.routers.qbittorrent.rule=Host(`qbittorrent.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=web-secure"
+      - "traefik.http.routers.qbittorrent.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.qbittorrent.middlewares=authelia@docker"
+      - "traefik.udp.routers.qbittorrent.entrypoints=qbittorrent-8999-udp"
+      - "traefik.udp.services.qbittorrent.loadbalancer.server.port=8999"
+      - "traefik.tcp.routers.qbittorrent.entrypoints=qbittorrent-8999-tcp"
+      - "traefik.tcp.services.qbittorrent.loadbalancer.server.port=8999"
+      - "traefik.tcp.routers.qbittorrent.rule=HostSNI(`*`)"

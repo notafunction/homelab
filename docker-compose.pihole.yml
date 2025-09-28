@@ -1,8 +1,8 @@
-version: "3.7"
 networks:
   default:
     external:
       name: "homelab_base_default"
+
 services:
   cloudflared:
     image: "visibilityspots/cloudflared"
@@ -17,7 +17,6 @@ services:
   pihole:
     image: "pihole/pihole:${PIHOLE_VERSION}"
     restart: "unless-stopped"
-    platform: "linux/arm64/v8"
     ports:
       - "53:53/tcp"
       - "53:53/udp"

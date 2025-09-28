@@ -20,8 +20,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "1900:1900/udp"
-      - "7359:7359/udp"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/var/log/traefik:/var/log/traefik"
@@ -55,30 +53,12 @@ services:
       - "./data/postgres/data:/var/lib/postgresql/data"
       - "./data/postgres/init:/docker-entrypoint-initdb.d"
 
-  mongo:
-    image: "mongo:${MONGO_VERSION}"
-    restart: "unless-stopped"
-    command: "mongod --oplogSize 128 --replSet rs0"
-    volumes:
-      - "./data/mongo/data:/data/db"
-
-  mongo-init-replica:
-    image: "mongo:${MONGO_VERSION}"
-    command: >
-      bash -c
-        "for i in `seq 1 30`; do
-          mongo mongo/rocketchat --eval \"
-            rs.initiate({
-              _id: 'rs0',
-              members: [ { _id: 0, host: 'localhost:27017' } ]})\" &&
-          s=$$? && break || s=$$?;
-          echo \"Tried $$i times. Waiting 5 secs...\";
-          sleep 5;
-        done; (exit $$s)"
-
   authelia:
     image: "authelia/authelia:${AUTHELIA_VERSION}"
     restart: "unless-stopped"
+    environment:
+      PUID: "${UID}"
+      GUID: "${GID}"
     volumes:
       - "./data/authelia/authelia.log:/config/authelia.log"
       - "./data/authelia/db.sqlite3:/config/db.sqlite3"
