@@ -42,20 +42,20 @@ services:
 #      - "traefik.http.routers.cadvisor.tls.certresolver=letsencrypt"
 #      - "traefik.http.routers.cadvisor.middlewares=authelia@docker,allowframe@file"
 
-#  loki:
-#    image: grafana/loki:latest
-#    restart: "unless-stopped"
+  loki:
+    image: grafana/loki:latest
+    restart: "unless-stopped"
 
-#  fluentbit:
-#    image: grafana/fluent-bit-plugin-loki:latest
-#    restart: "unless-stopped"
-#    environment:
-#      LOKI_URL: http://loki:3100/loki/api/v1/push
-#    volumes:
-#      - ./data/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-#    networks:
-#      default:
-#        ipv4_address: "172.18.255.2"
+  fluentbit:
+    image: grafana/fluent-bit-plugin-loki:latest
+    restart: "unless-stopped"
+    environment:
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./data/fluentbit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    networks:
+      default:
+        ipv4_address: "172.18.255.2"
 
   alertmanager:
     image: "prom/alertmanager:${ALERTMANAGER_VERSION}"

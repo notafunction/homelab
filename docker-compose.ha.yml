@@ -21,3 +21,17 @@ services:
       - "traefik.http.routers.homeassistant.entrypoints=web-secure"
       - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
       - "traefik.http.routers.homeassistant.middlewares=authelia@docker"
+
+  mosquitto:
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883/tcp"
+    environment:
+      PUID: "${UID}"
+      GUID: "${GID}"
+      TZ: "${TIMEZONE}"
+    volumes:
+      - ./data/mosquitto/config:/mosquitto/config
+      - ./data/mosquitto/data:/mosquitto/data
+      - ./data/mosquitto/log:/mosquitto/log

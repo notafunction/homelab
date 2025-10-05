@@ -16,3 +16,6 @@ services:
       - "traefik.http.routers.uptime.rule=Host(`uptime.${DOMAIN_NAME}`)"
       - "traefik.http.routers.uptime.entrypoints=web-secure"
       - "traefik.http.routers.uptime.tls.certresolver=letsencrypt"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1

@@ -19,7 +19,6 @@ services:
       - "traefik.http.routers.overseerr.rule=Host(`overseerr.${DOMAIN_NAME}`)"
       - "traefik.http.routers.overseerr.entrypoints=web-secure"
       - "traefik.http.routers.overseerr.tls.certresolver=letsencrypt"
-      #- "traefik.http.routers.overseerr.middlewares=authelia@docker"
 
   sonarr:
     image: "linuxserver/sonarr"
@@ -59,6 +58,25 @@ services:
       - "traefik.http.routers.radarr.tls.certresolver=letsencrypt"
       - "traefik.http.routers.radarr.middlewares=authelia@docker"
 
+  lidarr:
+    image: "linuxserver/lidarr"
+    restart: "unless-stopped"
+    environment:
+      PUID: "${UID}"
+      PGID: "${GID}"
+      TZ: "${TIMEZONE}"
+    volumes:
+      - "./data/lidarr/config:/config"
+      - "/etc/localtime:/etc/localtime:ro"
+      - ${MEDIA_DATA}:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.lidarr.entrypoints=web-secure"
+      - "traefik.http.routers.lidarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.lidarr.middlewares=authelia@docker"
+
   prowlarr:
     image: linuxserver/prowlarr:latest
     restart: unless-stopped
@@ -75,6 +93,24 @@ services:
       - "traefik.http.routers.prowlarr.entrypoints=web-secure"
       - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
       - "traefik.http.routers.prowlarr.middlewares=authelia@docker"
+
+  profilarr:
+    image: santiagosayshey/profilarr:latest
+    volumes:
+      - ./data/profilarr/config:/config
+    environment:
+      PUID: "${UID}"
+      PGID: "${GID}"
+      TZ: "${TIMEZONE}"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.profilarr.loadbalancer.server.port=6868"
+      - "traefik.http.routers.profilarr.rule=Host(`profilarr.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.profilarr.entrypoints=web-secure"
+      - "traefik.http.routers.profilarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.profilarr.middlewares=authelia@docker"
+
 
   qbittorrent:
     image: "trigus42/qbittorrentvpn:latest"
