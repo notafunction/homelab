@@ -1,0 +1,21 @@
+name: actual-budget
+
+services:
+    actual-server:
+        image: actualbudget/actual-server:latest-alpine
+        restart: unless-stopped
+        networks:
+            - homelab_base_default
+        volumes:
+            - ./data:/data
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.services.actual.loadbalancer.server.port=5006"
+            - "traefik.http.routers.actual.rule=Host(`budget.${DOMAIN_NAME}`)"
+            - "traefik.http.routers.actual.entrypoints=web-secure"
+            - "traefik.http.routers.actual.tls.certresolver=letsencrypt"
+            - "traefik.http.routers.actual.middlewares=authelia@docker"
+
+networks:
+    homelab_base_default:
+        external: true

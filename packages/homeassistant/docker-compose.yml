@@ -1,0 +1,40 @@
+name: homeassistant
+
+networks:
+    homelab_base_default:
+        external: true
+
+services:
+    ha:
+        image: lscr.io/linuxserver/homeassistant:latest
+        restart: unless-stopped
+        networks:
+            - homelab_base_default
+        volumes:
+            - ./ha-data/config:/config
+            - /run/dbus:/run/dbus:ro
+        environment:
+            - TZ=${TIMEZONE}
+            - PUID=${UID}
+            - PGID=${GID}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+            - "traefik.http.routers.homeassistant.rule=Host(`ha.${DOMAIN_NAME}`)"
+            - "traefik.http.routers.homeassistant.entrypoints=web-secure"
+            - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
+            - "traefik.http.routers.homeassistant.middlewares=authelia@docker"
+
+    mosquitto:
+        image: eclipse-mosquitto
+        restart: unless-stopped
+        ports:
+            - "1883:1883/tcp"
+        environment:
+            PUID: "${UID}"
+            GUID: "${GID}"
+            TZ: "${TIMEZONE}"
+        volumes:
+            - ./mosquitto-data/config:/mosquitto/config
+            - ./mosquitto-data/data:/mosquitto/data
+            - ./mosquitto-data/log:/mosquitto/log
